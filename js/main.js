@@ -82,7 +82,7 @@ import { createBottle } from './bottle3d.js';
       const base = Math.max(c.width / image.naturalWidth, c.height / image.naturalHeight); const iw = image.naturalWidth * base; const ih = image.naturalHeight * base;
       k.drawImage(image, (c.width - iw) / 2, (c.height - ih) / 2, iw, ih); wCache = { img: image, c, w: c.width, h: c.height };
     }
-    const raw = gsap.utils.clamp(0, 1, wProgress / 0.86); const e = prefersReduced.matches ? 1 : gsap.parseEase('power2.inOut')(raw);
+    const raw = gsap.utils.clamp(0, 1, wProgress / 0.86); const e = gsap.parseEase('power2.inOut')(raw); // conteúdo guiado pelo scroll: roda também com 'reduzir movimento' (iPhone em pouca energia)
     const s0 = Math.max((W / 2) / 8.5, (H / 2) / 21) * 1.25; const s1 = Math.min(W * 0.26, H * 0.34) / 85; const sc = Math.exp(Math.log(s0) + (Math.log(s1) - Math.log(s0)) * e);
     const ax = A0.x + (A1.x - A0.x) * e; const ay = A0.y + (A1.y - A0.y) * e; const cx = W / 2; const cy = H * (0.5 - 0.06 * e);
     wCtx.setTransform(1, 0, 0, 1, 0, 0); wCtx.clearRect(0, 0, wCanvas.width, wCanvas.height); wCtx.save();
