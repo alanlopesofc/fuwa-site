@@ -17,7 +17,7 @@ import { createBottle } from './bottle3d.js';
   let activeCount = frameCount[frameDir];
   let drawQueued = false;
   let lastDrawn = -1;
-  let wProgress = 0; let wQueued = false;
+  let wProgress = 0; let wQueued = false; let wCache = null;
   function queueW() { if (wQueued) return; wQueued = true; requestAnimationFrame(() => { wQueued = false; if (wStageVisible()) drawW(); }); }
   function wStageVisible() { const st = document.querySelector('.w-stage'); return st && st.style.visibility !== 'hidden'; }
   const filmCanvas = document.querySelector('#film-canvas');
@@ -49,6 +49,7 @@ import { createBottle } from './bottle3d.js';
   // no celular os quadros têm 720 px: acima de 1.5x só gasta GPU
   function dprCap() { return Math.min(window.devicePixelRatio || 1, window.matchMedia('(max-width: 800px)').matches ? 1.5 : 2); }
   function resizeCanvas(canvas, ctx) {
+    filmDrawnIndex = -1; wCache = null;
     const ratio = dprCap(); const rect = canvas.getBoundingClientRect();
     canvas.width = Math.max(1, Math.floor(rect.width * ratio)); canvas.height = Math.max(1, Math.floor(rect.height * ratio)); ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
@@ -57,8 +58,9 @@ import { createBottle } from './bottle3d.js';
     const rect = canvas.getBoundingClientRect(); const scale = Math.max(rect.width / image.naturalWidth, rect.height / image.naturalHeight); const width = image.naturalWidth * scale; const height = image.naturalHeight * scale;
     ctx.clearRect(0, 0, rect.width, rect.height); ctx.drawImage(image, (rect.width - width) / 2, (rect.height - height) / 2, width, height);
   }
+  let filmDrawnIndex = -1, filmDrawnImg = null;
   function drawFilm() {
-    const index = Math.round(frameState.progress * (activeCount - 1)) + 1; frameState.index = index; const image = nearestLoaded(index); drawCover(filmCtx, filmCanvas, image);
+    const index = Math.round(frameState.progress * (activeCount - 1)) + 1; frameState.index = index; const image = nearestLoaded(index); if (index === filmDrawnIndex && image === filmDrawnImg) return; filmDrawnIndex = index; filmDrawnImg = image; drawCover(filmCtx, filmCanvas, image);
     if (lastDrawn !== index) { frameCounter.textContent = `f${String(frameStart + index - 1).padStart(3, '0')} / f204`; frameStatus.textContent = image?.complete ? 'filme Fuwa' : 'carregando o filme'; lastDrawn = index; }
   }
   function queueDraw() { if (drawQueued) return; drawQueued = true; requestAnimationFrame(() => { drawQueued = false; drawFilm(); }); }
@@ -72,10 +74,24 @@ import { createBottle } from './bottle3d.js';
   const W_PATH = new Path2D('M17.5 48C17.5 43.31 21.31 39.5 26 39.5C30.69 39.5 34.5 43.31 34.5 48V74C34.5 78.69 38.31 82.5 43 82.5C47.69 82.5 51.5 78.69 51.5 74V55C51.5 50.31 55.31 46.5 60 46.5C64.69 46.5 68.5 50.31 68.5 55V74C68.5 78.69 72.31 82.5 77 82.5C81.69 82.5 85.5 78.69 85.5 74V39C85.5 34.31 89.31 30.5 94 30.5C98.69 30.5 102.5 34.31 102.5 39V74C102.5 88.08 91.08 99.5 77 99.5C70.47 99.5 64.51 97.04 60 93.01C55.49 97.04 49.53 99.5 43 99.5C28.92 99.5 17.5 88.08 17.5 74Z');
   const A0 = { x: 26, y: 62 }, A1 = { x: 60, y: 65 };
   function drawW() {
-    const rect = wCanvas.getBoundingClientRect(); const W = rect.width; const H = rect.height; const image = loaded.get(activeCount)?.complete ? loaded.get(activeCount) : nearestLoaded(activeCount); if (!image || !image.complete || !W) return;
-    const ratio = dprCap(); const raw = gsap.utils.clamp(0, 1, wProgress / 0.86); const e = prefersReduced.matches ? 1 : gsap.parseEase('power2.inOut')(raw); const s0 = Math.max((W / 2) / 8.5, (H / 2) / 21) * 1.25; const s1 = Math.min(W * 0.26, H * 0.34) / 85; const s = Math.exp(Math.log(s0) + (Math.log(s1) - Math.log(s0)) * e); const ax = A0.x + (A1.x - A0.x) * e; const ay = A0.y + (A1.y - A0.y) * e; const cx = W / 2; const cy = H * (0.5 - 0.06 * e);
-    wCtx.setTransform(ratio, 0, 0, ratio, 0, 0); wCtx.clearRect(0, 0, W, H); wCtx.save(); wCtx.setTransform(ratio * s, 0, 0, ratio * s, ratio * (cx - ax * s), ratio * (cy - ay * s)); wCtx.clip(W_PATH); wCtx.setTransform(ratio, 0, 0, ratio, 0, 0); const z = 1 + 0.06 * e; const base = Math.max(W / image.naturalWidth, H / image.naturalHeight) * z; const iw = image.naturalWidth * base; const ih = image.naturalHeight * base; wCtx.drawImage(image, (W - iw) / 2, (H - ih) / 2, iw, ih); const fill = gsap.utils.clamp(0, 1, (raw - 0.8) / 0.2); if (fill > 0) { wCtx.globalAlpha = fill; wCtx.fillStyle = '#6F86A3'; wCtx.fillRect(0, 0, W, H); wCtx.globalAlpha = 1; } wCtx.restore();
+    const image = loaded.get(activeCount)?.complete ? loaded.get(activeCount) : nearestLoaded(activeCount); if (!image || !image.complete || !wCanvas.width) return;
+    const ratio = dprCap(); const W = wCanvas.width / ratio; const H = wCanvas.height / ratio;
+    // a foto fica pré-escalada num canvas à parte: a cada quadro só a máscara muda (bem mais leve no iPhone)
+    if (!wCache || wCache.img !== image || wCache.w !== wCanvas.width || wCache.h !== wCanvas.height) {
+      const c = document.createElement('canvas'); c.width = wCanvas.width; c.height = wCanvas.height; const k = c.getContext('2d');
+      const base = Math.max(c.width / image.naturalWidth, c.height / image.naturalHeight); const iw = image.naturalWidth * base; const ih = image.naturalHeight * base;
+      k.drawImage(image, (c.width - iw) / 2, (c.height - ih) / 2, iw, ih); wCache = { img: image, c, w: c.width, h: c.height };
+    }
+    const raw = gsap.utils.clamp(0, 1, wProgress / 0.86); const e = prefersReduced.matches ? 1 : gsap.parseEase('power2.inOut')(raw);
+    const s0 = Math.max((W / 2) / 8.5, (H / 2) / 21) * 1.25; const s1 = Math.min(W * 0.26, H * 0.34) / 85; const sc = Math.exp(Math.log(s0) + (Math.log(s1) - Math.log(s0)) * e);
+    const ax = A0.x + (A1.x - A0.x) * e; const ay = A0.y + (A1.y - A0.y) * e; const cx = W / 2; const cy = H * (0.5 - 0.06 * e);
+    wCtx.setTransform(1, 0, 0, 1, 0, 0); wCtx.clearRect(0, 0, wCanvas.width, wCanvas.height); wCtx.save();
+    wCtx.setTransform(ratio * sc, 0, 0, ratio * sc, ratio * (cx - ax * sc), ratio * (cy - ay * sc)); wCtx.clip(W_PATH);
+    wCtx.setTransform(1, 0, 0, 1, 0, 0); wCtx.drawImage(wCache.c, 0, 0);
+    const fill = gsap.utils.clamp(0, 1, (raw - 0.8) / 0.2); if (fill > 0) { wCtx.globalAlpha = fill; wCtx.fillStyle = '#6F86A3'; wCtx.fillRect(0, 0, wCanvas.width, wCanvas.height); wCtx.globalAlpha = 1; }
+    wCtx.restore();
   }
+
 
   function setupMenu() { const trigger = document.querySelector('#menu-trigger'); const menu = document.querySelector('#site-menu'); const close = document.querySelector('#menu-close'); const setOpen = (open) => { menu.classList.toggle('is-open', open); menu.setAttribute('aria-hidden', String(!open)); trigger.setAttribute('aria-expanded', String(open)); document.body.classList.toggle('menu-open', open); }; trigger.addEventListener('click', () => setOpen(!menu.classList.contains('is-open'))); close.addEventListener('click', () => setOpen(false)); menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false))); }
   function setupModal() { const modal = document.querySelector('#waitlist-modal'); const form = document.querySelector('#waitlist-form'); const close = () => { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }; document.querySelectorAll('.waitlist-open').forEach((button) => button.addEventListener('click', () => { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); modal.querySelector('input').focus(); })); modal.querySelector('.modal-close').addEventListener('click', close); modal.addEventListener('click', (event) => { if (event.target === modal) close(); }); form.addEventListener('submit', (event) => { event.preventDefault(); if (!form.checkValidity()) return; form.classList.add('is-success'); form.querySelector('button').textContent = 'feito. até já.'; }); document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { close(); document.querySelector('#lightbox').classList.remove('is-open'); } }); }
@@ -120,23 +136,21 @@ import { createBottle } from './bottle3d.js';
     walk(el); return el.querySelectorAll('.w');
   }
   function setupReveal(quiet) {
+    // revelação por tempo (não por scrub): o texto termina de aparecer sozinho e sempre fica legível
     document.querySelectorAll('.reveal-words').forEach((el) => {
       const words = splitWords(el);
       if (quiet) { gsap.set(words, { opacity: 1 }); return; }
-      const inRupture = el.closest('#ruptura');
-      gsap.to(words, { opacity: 1, ease: 'none', stagger: 0.12, scrollTrigger: inRupture
-        ? { trigger: '#ruptura', start: () => `${[...document.querySelectorAll('#ruptura .reveal-words')].indexOf(el) * 30}% top`, end: () => `${[...document.querySelectorAll('#ruptura .reveal-words')].indexOf(el) * 30 + 34}% top`, scrub: .4 }
-        : { trigger: el, start: 'top 88%', end: 'top 52%', scrub: .4 } });
+      gsap.fromTo(words, { opacity: 0, y: '0.35em' }, { opacity: 1, y: 0, duration: .7, stagger: .045, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
     });
     document.querySelectorAll('.has-w').forEach((sec) => gsap.fromTo(sec, { '--wy': '60px' }, { '--wy': '-60px', ease: 'none', scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: true } }));
   }
   function setupCommunityScroll() {
+    // celular: trilho lateral guiado pelo scroll dentro de um palco sticky (sem pin, que abria um vão no iOS)
     const mm = gsap.matchMedia();
     mm.add('(max-width: 800px)', () => {
-      const track = document.querySelector('#comunidade .ugc-carousel');
-      if (!track) return;
-      const dist = () => Math.max(0, track.scrollWidth - window.innerWidth + 40);
-      gsap.to(track, { x: () => -dist(), ease: 'none', scrollTrigger: { trigger: '#comunidade', start: 'top top', end: () => '+=' + dist() * 1.4, pin: true, scrub: .5, invalidateOnRefresh: true } });
+      const track = document.querySelector('#comunidade .ugc-carousel'); if (!track) return;
+      const st = ScrollTrigger.create({ trigger: '#comunidade', start: 'top top', end: 'bottom bottom', onUpdate: (self) => { const dist = Math.max(0, track.scrollWidth - window.innerWidth + 40); track.style.transform = `translate3d(${-dist * self.progress}px,0,0)`; } });
+      return () => { st.kill(); track.style.transform = ''; };
     });
   }
   function setupBottle() { const mount = document.querySelector('#bottle-mount'); const introFilm = document.querySelector('#intro-film'); let bottle; try { bottle = createBottle({ container: mount, onClip: (polygon, enter, full) => { introFilm.style.clipPath = polygon; introFilm.style.opacity = String(enter);  } }); } catch (error) { console.error(error); document.body.classList.add('is-fallback'); return; } bottleApi = bottle; window.addEventListener('beforeunload', () => bottle.dispose(), { once: true }); }
@@ -156,7 +170,7 @@ import { createBottle } from './bottle3d.js';
       wStage.style.visibility = pW > 0 ? 'visible' : 'hidden';
       filmStage.style.visibility = pW > 0.02 ? 'hidden' : 'visible';
       if (pW !== wProgress) { wProgress = pW; queueW(); }
-      document.body.classList.toggle('on-dark', pOpen >= 0.999 && pW < 0.35);
+      document.body.classList.toggle('on-dark', pW < 0.35);
       gsap.set('.w-caption', { autoAlpha: clamp01((pW - 0.72) / 0.14), y: quiet ? 0 : 18 * (1 - clamp01((pW - 0.72) / 0.14)) });
     } });
     ScrollTrigger.create({ trigger: '#produto', start: 'top 70%', endTrigger: '.closing', end: 'bottom bottom', onEnter: () => document.querySelector('#fixed-cta').classList.add('is-visible'), onLeave: () => document.querySelector('#fixed-cta').classList.remove('is-visible'), onEnterBack: () => document.querySelector('#fixed-cta').classList.add('is-visible'), onLeaveBack: () => document.querySelector('#fixed-cta').classList.remove('is-visible') }); }

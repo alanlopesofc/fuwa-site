@@ -146,3 +146,92 @@ a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{o
 }
 @media (min-width:801px){body.in-offer .fixed-cta{opacity:0;pointer-events:none}}
 .film-status{display:none}
+
+/* ===== v2.2 (feedback do Alan no iPhone 12) ===== */
+/* palcos com a altura real da tela no iOS (barra recolhida): sem faixa vazia embaixo */
+.intro-stage,.offer-stage{height:100vh;height:100lvh}
+.reveal-words .w{opacity:1}
+
+/* abertura: azul profundo, texto claro, mais respiro entre frasco e texto */
+.intro-stage .opening-stage{background:radial-gradient(120% 90% at 50% 30%,#4E6178 0%,#33404F 55%,#232A33 100%)}
+.opening-stage:after{display:none}
+.opening-copy{color:var(--branco)}
+.opening-copy h1{color:var(--branco)}
+.opening-copy p{color:#C9CED6}
+.opening-copy .eyebrow,.opening-cue,.skip-intro{color:#AEB6C1}
+.skip-intro{border-color:#AEB6C1}
+
+/* benefícios em azul */
+.benefits.section-azul h2,.benefits.section-azul h3,.benefits.section-azul p{color:var(--branco)}
+.benefits.section-azul h2 em{color:#C9D3DF}
+.benefits.section-azul .eyebrow{color:#DDE3EA}
+.section-azul.has-w::before{opacity:.12}
+.benefit-grid{grid-template-columns:repeat(4,1fr)}
+
+/* ruptura: tela única, texto em bloco claro e legível */
+.rupture{height:auto;min-height:100vh;min-height:100lvh}
+.rupture-stage{position:relative;height:auto;min-height:100vh;min-height:100lvh}
+.rupture-light{background-image:linear-gradient(180deg,var(--leite) 0%,var(--leite) 34%,rgba(245,242,237,.85) 48%,rgba(245,242,237,0) 66%),url('../assets/img2/t04-leveza.jpg')}
+.rupture-copy{position:relative;left:auto;transform:none;margin:0 auto;padding-top:clamp(96px,14vh,150px)}
+.rupture-copy h2{color:var(--grafite)}
+.rupture-copy p{color:#3C3E44;font-weight:600}
+
+/* comunidade em areia, texto escuro */
+.community.section-areia h2,.community.section-areia p{color:var(--grafite)}
+
+/* oferta */
+.offer-thumb{display:none}
+.price-block{margin:6px 0 4px}
+.price-split{display:block;font:500 clamp(34px,4vw,52px)/1 var(--mono);color:var(--grafite)}
+.price-full{display:block;margin-top:6px;font:15px var(--mono);color:var(--grafite)}
+.price-unit{display:block;margin-top:4px;font:12px var(--mono);letter-spacing:.06em;color:var(--azul-ui)}
+.fixed-thumb{display:none}
+
+/* em breve: logo aplicado com mais realismo */
+.coming-logo{mix-blend-mode:normal;opacity:1}
+.coming-logo-serum{width:24%;left:50%;top:62%;transform:translate(-50%,-50%) rotate(-90deg);opacity:.82;filter:drop-shadow(0 0 .5px rgba(0,0,0,.15));mix-blend-mode:soft-light}
+.coming-logo-serum.dup{mix-blend-mode:normal;opacity:.38}
+.coming-logo-creme{width:24%;left:50%;top:60.5%;transform:translate(-50%,-50%);filter:brightness(.35) sepia(.15);opacity:.42;mix-blend-mode:multiply}
+
+/* fechamento: no desktop a foto não estica; texto ao lado */
+@media (min-width:801px){
+  .closing{display:grid;grid-template-columns:1fr 1fr;background:#8A9DB3}
+  .closing picture{position:relative;inset:auto;grid-column:2;height:100%}
+  .closing picture img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 50%}
+  .closing:after{display:none}
+  .closing-copy{position:relative;grid-column:1;grid-row:1;align-self:center;left:auto;bottom:auto;padding:0 clamp(32px,6vw,96px)}
+}
+
+@media (max-width:800px){
+  .opening-copy{bottom:calc(64px + env(safe-area-inset-bottom))}
+  .opening-copy h1{font-size:clamp(44px,12.5vw,64px)}
+  .opening-cue{display:none}
+  .benefit-grid{grid-template-columns:1fr 1fr}
+  .benefit-grid article:last-child{grid-column:auto;max-width:none}
+  .rupture-copy{padding-top:96px}
+  /* produto: menos apertado */
+  .product{min-height:auto;padding:84px 20px 120px}
+  .product-image-wrap{height:34svh;min-height:240px}
+  .product-copy h2{font-size:clamp(40px,11.5vw,56px)}
+  /* comunidade: palco sticky com trilho lateral */
+  .community{height:260vh;padding:0;overflow:visible}
+  .community-stage{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden;padding:84px 20px 0;display:flex;flex-direction:column}
+  .community .ugc-carousel{margin-top:22px}
+  .community .ugc-carousel figure{width:56vw}
+  /* oferta: o produto nunca sai de vista */
+  .offer-drop{display:none}
+  .offer-stage{padding-top:76px}
+  .offer-thumb{display:block;float:right;width:84px;height:126px;object-fit:contain;margin:-6px -6px 4px 10px}
+  .fixed-thumb{display:block;width:30px;height:46px;object-fit:contain;margin-left:-4px}
+  .fixed-cta{gap:8px}
+  .fixed-price{font-size:15px;margin-right:auto}
+  .coming-logo-serum{width:24%}
+}
+.coming-logo-creme{filter:brightness(.42) sepia(.1);opacity:.62}
+@media (max-width:800px){
+  .fixed-cta .button{padding:11px 14px;font-size:11px;white-space:nowrap;letter-spacing:.04em}
+  .fixed-price small{font-size:9px;white-space:nowrap}
+  .rupture-light{background-image:linear-gradient(180deg,var(--leite) 0%,var(--leite) 50%,rgba(245,242,237,.8) 60%,rgba(245,242,237,0) 74%),url('../assets/img2/t04-leveza.jpg');background-size:auto 46%;background-repeat:no-repeat;background-position:62% 100%;background-color:var(--leite)}
+}
+.rupture-light{background-image:linear-gradient(180deg,var(--leite) 0%,var(--leite) 46%,rgba(245,242,237,.75) 56%,rgba(245,242,237,0) 70%),url('../assets/img2/t04-leveza.jpg');background-size:auto 58%;background-repeat:no-repeat;background-position:72% 100%;background-color:var(--leite)}
+@media (max-width:800px){.rupture-light{background-size:auto 50%;background-position:66% 100%}}

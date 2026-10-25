@@ -174,8 +174,8 @@ export function createBottle({ container, onClip = () => {} }) {
 
   function updateCamera(p) {
     const portrait = camera.aspect < 1;
-    startCamera.set(0, portrait ? 10 : 40, portrait ? 1300 : 620);
-    lookStart.set(0, portrait ? -72 : 40, 0);
+    startCamera.set(0, portrait ? 10 : 40, portrait ? 1500 : 620);
+    lookStart.set(0, portrait ? -95 : 40, 0);
     const approach = smoothstep((p - 0.1) / 0.5);
     if (p < 0.6) camera.position.lerpVectors(startCamera, closeCamera, approach);
     else camera.position.lerpVectors(closeCamera, insideCamera, smoothstep((p - 0.6) / 0.35));
