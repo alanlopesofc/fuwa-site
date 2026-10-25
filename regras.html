@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FUWA · Guia de UI/UX</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="assets/logo/FUWA-SIMBOLO-AZUL-FUWA.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono&family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--areia:#DCD2C4;--grafite:#23262D;--leite:#F5F2ED;--branco:#F2EBDF;--azul:#6F86A3;--azul-ui:#566B84;--salvia-s:#B4BDA6;--malva-s:#C4B2BA;--argila-s:#E0B6A2;--linha:rgba(35,38,45,.16)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--leite);color:var(--grafite);font:17px/1.6 'Nunito',system-ui,sans-serif}
+a{color:var(--azul-ui)}
+header{padding:clamp(40px,7vw,96px) clamp(20px,6vw,92px) 32px;max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
+header img{height:34px}
+.eyebrow{font:11px 'DM Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--azul-ui)}
+h1{font:400 clamp(44px,7vw,96px)/.95 'DM Serif Display',serif;margin:14px 0 0}
+h1 em{color:var(--azul-ui)}
+h2{font:400 clamp(30px,3.6vw,46px)/1.05 'DM Serif Display',serif;margin:0 0 18px}
+main{max-width:1200px;margin:0 auto;padding:0 clamp(20px,6vw,92px) 96px}
+.lead{font-size:20px;max-width:720px;margin:20px 0 0}
+section{padding:48px 0;border-top:1px solid var(--linha);display:grid;grid-template-columns:280px 1fr;gap:clamp(20px,5vw,72px)}
+section>div:first-child .eyebrow{display:block;margin-bottom:10px}
+ul{margin:0;padding-left:20px}
+li{margin:0 0 10px}
+li strong{font-weight:600}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:20px}
+.sw{border-radius:10px;padding:56px 12px 12px;font:11px 'DM Mono',monospace;letter-spacing:.06em}
+table{width:100%;border-collapse:collapse;font-size:15px;margin-top:8px}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--linha);vertical-align:top}
+th{font:11px 'DM Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--azul-ui)}
+code{font:13px 'DM Mono',monospace;background:rgba(111,134,163,.12);padding:2px 6px;border-radius:5px}
+footer{max-width:1200px;margin:0 auto;padding:32px clamp(20px,6vw,92px) 56px;font:11px 'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+@media (max-width:800px){section{grid-template-columns:1fr}table{font-size:14px}th:nth-child(3),td:nth-child(3){display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <span class="eyebrow">FUWA · site de lançamento · v2.1</span>
+    <h1>Guia de UI/UX.<br><em>Leve até na tela.</em></h1>
+    <p class="lead">As regras que o site da FUWA segue. Servem para quem for mexer na página: design, copy, dev ou mídia. Se uma mudança quebra uma regra daqui, ela precisa de um motivo melhor que a regra.</p>
+  </div>
+  <a href="index.html" aria-label="Voltar ao site"><img src="assets/logo/FUWA-LOGO-GRAFITE.svg" alt="FUWA"></a>
+</header>
+<main>
+
+<section><div><span class="eyebrow">01</span><h2>Princípios</h2></div><div><ul>
+<li><strong>Vender uma sensação antes de vender um sabonete.</strong> A ordem das telas é intrigar → desejar → entender → confiar → pertencer → comprar → tirar a última dúvida.</li>
+<li><strong>Uma ideia por tela.</strong> Uma headline e no máximo uma frase de apoio. Detalhe vai para painel expansível.</li>
+<li><strong>Um gesto marcante por tela.</strong> Se tudo se mexe, nada se destaca.</li>
+<li><strong>Nunca prender o usuário.</strong> "Pular introdução" sempre visível na abertura; o botão de compra sempre a um toque depois da Tela 02.</li>
+<li><strong>Honestidade é parte da UX.</strong> Sem contagem regressiva, sem escassez falsa, sem depoimento inventado.</li>
+</ul></div></section>
+
+<section><div><span class="eyebrow">02</span><h2>Cor</h2></div><div>
+<p>Azul Fuwa é a cor herói, não a única. Cada tela usa uma cor da família para dar ritmo.</p>
+<div class="swatches">
+<div class="sw" style="background:#6F86A3;color:#F2EBDF">AZUL FUWA #6F86A3<br>abertura, oferta</div>
+<div class="sw" style="background:#F5F2ED;border:1px solid var(--linha)">LEITE #F5F2ED<br>produto, ruptura</div>
+<div class="sw" style="background:#DCD2C4">AREIA #DCD2C4<br>FAQ, w</div>
+<div class="sw" style="background:#B4BDA6">SÁLVIA SUAVE #B4BDA6<br>benefícios, creme</div>
+<div class="sw" style="background:#C4B2BA">MALVA SUAVE #C4B2BA<br>comunidade</div>
+<div class="sw" style="background:#E0B6A2">ARGILA SUAVE #E0B6A2<br>sérum</div>
+<div class="sw" style="background:#23262D;color:#F2EBDF">GRAFITE #23262D<br>texto</div>
+</div>
+<ul style="margin-top:20px">
+<li>Texto sempre grafite ou branco-areia #F2EBDF. Nunca preto ou branco puros.</li>
+<li>Branco-areia sobre Azul Fuwa só em texto grande (contraste 3,16:1). Texto pequeno sobre azul usa grafite ou um card leite.</li>
+<li>Texto sobre foto: só onde a foto tem área calma, ou com véu em degradê. Se não dá para ler no celular, não está pronto.</li>
+</ul></div></section>
+
+<section><div><span class="eyebrow">03</span><h2>Tipografia</h2></div><div>
+<table><tr><th>Uso</th><th>Fonte</th><th>Tamanho</th></tr>
+<tr><td>Headline de tela</td><td>DM Serif Display</td><td><code>clamp(42px, 7vw, 104px)</code>, entrelinha .95</td></tr>
+<tr><td>Segunda linha (ênfase)</td><td>DM Serif Display, cor de apoio</td><td>mesmo tamanho; muda a cor, não o peso</td></tr>
+<tr><td>Texto de apoio</td><td>Nunito 400/600</td><td>17 a 24 px; nunca abaixo de 15 px</td></tr>
+<tr><td>Eyebrow, preço, técnico</td><td>DM Mono</td><td>11 a 16 px, caixa alta, espaçado</td></tr>
+</table>
+<ul style="margin-top:16px"><li>O nome da marca é sempre o logotipo em SVG, nunca "fuwa" digitado na fonte.</li><li>No celular, frases sobre vídeo ficam centralizadas e no terço médio da tela, não coladas embaixo.</li></ul>
+</div></section>
+
+<section><div><span class="eyebrow">04</span><h2>Movimento</h2></div><div><ul>
+<li><strong>Easing:</strong> <code>power2/power3.out</code> nas entradas, <code>power2.inOut</code> em transições guiadas pelo scroll. Nada de bounce elástico, glow ou parallax exagerado.</li>
+<li><strong>Só <code>transform</code>, <code>opacity</code> e <code>clip-path</code>.</strong> Nunca animar <code>top</code>, <code>width</code> ou <code>padding</code>.</li>
+<li><strong>Revelação de texto:</strong> palavra por palavra, de 14% para 100% de opacidade, guiada pelo scroll. Só em headlines e na ruptura.</li>
+<li><strong>Abertura, filme e símbolo w vivem num único palco</strong> (um <code>position: sticky</code>, um ScrollTrigger). Seções sticky em sequência criam costura e imagem duplicada.</li>
+<li><strong>Cenas lentas pedem mais scroll:</strong> o trecho do rosto no filme recebe metade do percurso.</li>
+<li><strong>Movimento reduzido:</strong> o filme continua guiado pelo scroll (é conteúdo), o resto vira fade ou aparece pronto. Nunca uma página morta.</li>
+</ul></div></section>
+
+<section><div><span class="eyebrow">05</span><h2>Conversão</h2></div><div><ul>
+<li>Botão fixo "QUERO SENTIR A FUWA" aparece depois da Tela 02. No celular vira uma barra com o preço, que continua visível na oferta.</li>
+<li>Na oferta, o card é sticky no desktop: preço, benefícios, botão e os painéis (modo de uso, ingredientes, informações técnicas) ficam juntos e legíveis.</li>
+<li>Toda área de toque tem no mínimo 44 × 44 px.</li>
+<li>Preço e frete aparecem como "em estudo" até a aprovação comercial. Nenhuma condição é comunicada como definitiva antes disso.</li>
+<li>Enquanto não há checkout, todo botão de compra abre a lista de espera.</li>
+</ul></div></section>
+
+<section><div><span class="eyebrow">06</span><h2>Conteúdo e imagem</h2></div><div><ul>
+<li><strong>Foto de produto só do render 3D</strong> com o rótulo oficial. IA de imagem erra o símbolo w (ele sai deitado, como "ε").</li>
+<li>Embalagem de produto futuro leva o logotipo aplicado sobre a foto, não gerado pela IA.</li>
+<li>Pessoas com pele real, poro e textura. Sem antes e depois. Conteúdo gerado por IA é identificado no rodapé.</li>
+<li><strong>ANVISA:</strong> nada de "trata acne", "cura", "clareia", "anti-manchas" ou promessa médica sem enquadramento e evidência. "Ajuda", "limpa", "sensação" quando houver base.</li>
+<li>Sem depoimentos ou contadores de comunidade até existirem relatos reais e autorizados.</li>
+</ul></div></section>
+
+<section><div><span class="eyebrow">07</span><h2>Desempenho</h2></div><div>
+<table><tr><th>Item</th><th>Regra</th><th>Por quê</th></tr>
+<tr><td>Preloader</td><td>O símbolo w se desenha conforme carregam as fontes, o rótulo do 3D e os primeiros quadros. Teto de 9 s.</td><td>A página abre inteira, sem engasgo, e ninguém fica preso numa tela de espera.</td></tr>
+<tr><td>Quadros do filme</td><td>Desktop: 187 de 1600 px. Celular: 94 de 540 px.</td><td>Quadros decodificados ocupam memória; no iPhone, o excesso trava a rolagem.</td></tr>
+<tr><td>Canvas</td><td>Densidade de pixel no máximo 1,5× no celular e 2× no desktop. Redesenho uma vez por quadro.</td><td>Resolução acima disso não aparece e custa GPU.</td></tr>
+<tr><td>3D</td><td>Renderiza só quando o progresso muda e só enquanto está na tela.</td><td>Evita trabalho escondido durante o filme.</td></tr>
+<tr><td>Vídeos curtos</td><td>Mudos, em loop, só tocam visíveis; o som abre no toque.</td><td>Autoplay respeitoso e leve.</td></tr>
+</table></div></section>
+
+<section><div><span class="eyebrow">08</span><h2>Acessibilidade</h2></div><div><ul>
+<li>Foco visível em links, botões, perguntas e campos.</li>
+<li>Todo conteúdo visual tem texto alternativo; o filme tem descrição no canvas.</li>
+<li>A narrativa inteira pode ser lida sem animação.</li>
+<li>Formulário com rótulo visível e mensagem de sucesso anunciada.</li>
+</ul></div></section>
+
+</main>
+<footer>FUWA · guia de UI/UX do site de lançamento · atualizado em 25/10/2026 · <a href="index.html">voltar ao site</a></footer>
+</body>
+</html>
