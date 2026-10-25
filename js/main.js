@@ -125,6 +125,13 @@ import { createBottle } from './bottle3d.js';
       .to(img, { y: -14, ease: 'power1.out', duration: .09 }).to(img, { y: 0, ease: 'power1.in', duration: .09 })
       .fromTo(shadow, { opacity: 0, scale: .3, xPercent: -50 }, { opacity: 1, scale: 1, xPercent: -50, ease: 'power2.in', duration: .82 }, 0);
   }
+  // ruptura: a janela com a pedra se abre até a tela cheia enquanto a seção entra (guiado pelo scroll, roda também em 'reduzir movimento')
+  function setupRuptureWindow() {
+    const win = document.querySelector('.rupture-window'); if (!win) return;
+    const mobile = window.matchMedia('(max-width: 800px)').matches; const side = mobile ? 8 : 14;
+    gsap.fromTo(win, { clipPath: `inset(0% ${side}% 0% ${side}% round 28px)` }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'none', scrollTrigger: { trigger: win, start: 'top 85%', end: 'top 15%', scrub: .5 } });
+    gsap.fromTo(win.querySelector('img'), { scale: 1.12 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: win, start: 'top bottom', end: 'bottom top', scrub: .5 } });
+  }
   let bottleApi = null;
   // o trecho do rosto (f144 em diante, ~68% dos quadros) recebe mais rolagem: fica mais lento
   function filmEase(p) { const k = 0.5, f = 0.677; return p < k ? (p / k) * f : f + ((p - k) / (1 - k)) * (1 - f); }
@@ -175,7 +182,7 @@ import { createBottle } from './bottle3d.js';
     } });
     ScrollTrigger.create({ trigger: '#produto', start: 'top 70%', endTrigger: '.closing', end: 'bottom bottom', onEnter: () => document.querySelector('#fixed-cta').classList.add('is-visible'), onLeave: () => document.querySelector('#fixed-cta').classList.remove('is-visible'), onEnterBack: () => document.querySelector('#fixed-cta').classList.add('is-visible'), onLeaveBack: () => document.querySelector('#fixed-cta').classList.remove('is-visible') }); }
 
-  resizeCanvas(filmCanvas, filmCtx); resizeCanvas(wCanvas, wCtx); loadFrame(1); loadFrame(activeCount); loadPriorityFrames(); setupMenu(); setupModal(); setupLightbox(); setupBottle(); setupMotion(); setupReveal(prefersReduced.matches); setupCommunityScroll(); setupOfferDrop(prefersReduced.matches); ScrollTrigger.create({ trigger: '#oferta', start: 'top 60%', end: 'bottom 40%', toggleClass: { targets: document.body, className: 'in-offer' } }); runPreloader();
+  resizeCanvas(filmCanvas, filmCtx); resizeCanvas(wCanvas, wCtx); loadFrame(1); loadFrame(activeCount); loadPriorityFrames(); document.body.classList.add("on-dark"); setupMenu(); setupModal(); setupLightbox(); setupBottle(); setupMotion(); setupReveal(prefersReduced.matches); setupCommunityScroll(); setupOfferDrop(prefersReduced.matches); setupRuptureWindow(); ScrollTrigger.create({ trigger: '.closing', start: 'top 70px', end: 'bottom 70px', toggleClass: { targets: document.body, className: 'on-dark-end' } }); ScrollTrigger.create({ trigger: '#oferta', start: 'top 60%', end: 'bottom 40%', toggleClass: { targets: document.body, className: 'in-offer' } }); runPreloader();
   window.addEventListener('resize', () => { resizeCanvas(filmCanvas, filmCtx); resizeCanvas(wCanvas, wCtx); queueDraw(); drawW(); ScrollTrigger.refresh(); }); isPortrait.addEventListener?.('change', resetFrameSource); document.fonts?.ready.then(() => ScrollTrigger.refresh());
   gsap.to('#progress-bar', { scaleX: 1, ease: 'none', scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: true } }); setTimeout(() => { queueDraw(); drawW(); }, 300);
 })();

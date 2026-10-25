@@ -235,3 +235,35 @@ a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{o
 }
 .rupture-light{background-image:linear-gradient(180deg,var(--leite) 0%,var(--leite) 46%,rgba(245,242,237,.75) 56%,rgba(245,242,237,0) 70%),url('../assets/img2/t04-leveza.jpg');background-size:auto 58%;background-repeat:no-repeat;background-position:72% 100%;background-color:var(--leite)}
 @media (max-width:800px){.rupture-light{background-size:auto 50%;background-position:66% 100%}}
+
+/* ===== v2.3 (revisão de UX com as skills) ===== */
+/* ruptura: texto acima, a pedra numa janela que se abre com a rolagem */
+.rupture{height:auto;min-height:0;background:var(--leite);padding:clamp(96px,14vh,150px) 0 0;display:block}
+.rupture-stage,.rupture-light,.rupture-lab{display:none}
+.rupture .rupture-copy{position:relative;left:auto;top:auto;transform:none;margin:0 auto;width:min(860px,calc(100% - 40px));text-align:center;padding:0}
+.rupture .rupture-copy h2{color:var(--grafite);font-size:clamp(44px,7vw,104px);line-height:1.02}
+.rupture .rupture-copy p{color:#3C3E44;font-weight:400;margin:16px auto 0;max-width:600px;font-size:clamp(18px,1.8vw,22px);opacity:1!important;transform:none!important}
+.rupture-window{margin-top:clamp(40px,7vh,72px);height:min(88vh,860px);overflow:hidden;clip-path:inset(0 14% 0 14% round 28px);will-change:clip-path}
+.rupture-window img{width:100%;height:100%;object-fit:cover;object-position:62% 55%;transform:scale(1.12);will-change:transform}
+
+/* fechamento: título em cima, foto inteira (16:9) num quadro, sem cortar a mão e sem esticar */
+.closing{position:relative;height:auto;min-height:0;display:block;overflow:visible;background:#33404F;color:var(--branco);padding:clamp(96px,12vh,140px) clamp(20px,6vw,92px) clamp(72px,10vh,120px)}
+.closing:after{display:none}
+.closing .closing-copy{position:relative;left:auto;bottom:auto;max-width:900px;margin:0 auto;text-align:center;padding:0}
+.closing .closing-copy h2{color:var(--branco);font-size:clamp(42px,6vw,88px);line-height:1.02}
+.closing .closing-copy p{color:#C9CED6;margin:14px 0 26px;font-size:clamp(18px,1.8vw,22px)}
+.closing-frame{margin:clamp(40px,6vh,64px) auto 0;width:min(1120px,100%);aspect-ratio:16/9;border-radius:20px;overflow:hidden}
+.closing-frame picture,.closing-frame img{position:static;display:block;width:100%;height:100%;object-fit:cover;grid-column:auto}
+@media (min-width:801px){.closing{display:block;grid-template-columns:none}.closing picture{position:static;height:100%}}
+
+/* áreas de toque e respiro da barra fixa */
+.text-link,.footer-guide a,.back-top,.skip-intro{display:inline-flex;align-items:center;min-height:44px}
+@media (max-width:800px){
+  .rupture{padding-top:88px}
+  .rupture-window{height:62vh;clip-path:inset(0 8% 0 8% round 22px)}
+  .closing{padding:84px 20px 120px}
+  .closing-frame{aspect-ratio:9/16;max-height:70vh;width:auto;max-width:100%}
+  .site-footer{padding-bottom:110px}
+}
+.closing .closing-frame picture,.closing .closing-frame picture img{position:static;inset:auto;display:block;width:100%;height:100%;object-fit:cover;grid-column:auto}
+body.on-dark-end .header-mark img{filter:brightness(0) invert(.93) sepia(.15)}

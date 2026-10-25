@@ -64,50 +64,56 @@ function makeBottle(labelTexture) {
   body.name = 'body-128mm-with-label';
   root.add(body);
 
-  const collar = new THREE.Mesh(smoothLathe(27, 30, 2.8, 96), blue);
+  // proporções medidas na foto de referência (app-01): colar rente ao corpo, um anel fino no ombro,
+  // haste grossa (Ø23) que vira um bico longo para a frente, com orifício quadrado na ponta
+  const collar = new THREE.Mesh(smoothLathe(25, 28, 3.2, 128), blue);
   collar.position.y = 79;
-  collar.name = 'overcap-collar-30mm';
+  collar.name = 'overcap-collar-flush';
   root.add(collar);
 
-  const gap = new THREE.Mesh(new THREE.CylinderGeometry(24.3, 24.3, 1.8, 64), blueDark);
-  gap.position.y = 64.9;
+  const gap = new THREE.Mesh(new THREE.CylinderGeometry(24.6, 24.6, 1.2, 96), blueDark);
+  gap.position.y = 64.6;
   root.add(gap);
 
-  const shoulderA = new THREE.Mesh(smoothLathe(20, 8, 1.8, 64), blue);
-  shoulderA.position.y = 99;
-  shoulderA.name = 'pump-shoulder-lower';
-  root.add(shoulderA);
-  const shoulderB = new THREE.Mesh(smoothLathe(15, 8, 1.6, 64), blue);
-  shoulderB.position.y = 107;
-  shoulderB.name = 'pump-shoulder-upper';
-  root.add(shoulderB);
+  const shoulder = new THREE.Mesh(smoothLathe(18, 5.5, 1.3, 96), blue);
+  shoulder.position.y = 95.9;
+  shoulder.name = 'pump-shoulder-ring';
+  root.add(shoulder);
 
-  const stem = new THREE.Mesh(smoothLathe(9, 30, 1.8, 64), blue);
-  stem.position.y = 123;
+  const stem = new THREE.Mesh(smoothLathe(11.5, 18, 1.2, 96), blue);
+  stem.position.y = 107;
   stem.name = 'pump-stem';
   root.add(stem);
 
-  const head = new THREE.Mesh(new RoundedBoxGeometry(28, 12, 26, 6, 2.4), blue);
-  head.position.set(0, 137, 13);
-  head.name = 'pump-head-and-forward-nozzle';
+  // cabeça do pump: perfil lateral medido na foto (bico curto e encorpado, passa ~10 mm da haste)
+  const prof = new THREE.Shape();
+  prof.moveTo(-10, 111);
+  prof.lineTo(-10, 115);
+  prof.quadraticCurveTo(-10, 121, -4, 121);
+  prof.lineTo(20, 120.6);
+  prof.quadraticCurveTo(23.5, 120.5, 23.5, 117.4);
+  prof.lineTo(23.5, 114.4);
+  prof.quadraticCurveTo(23.5, 112, 21, 112.1);
+  prof.lineTo(9, 112.4);
+  prof.quadraticCurveTo(7, 112.4, 6, 111);
+  prof.lineTo(-10, 111);
+  const headGeo = new THREE.ExtrudeGeometry(prof, { depth: 17, bevelEnabled: true, bevelThickness: 2.4, bevelSize: 2.2, bevelSegments: 6, curveSegments: 24 });
+  headGeo.translate(0, 0, -8.5);
+  headGeo.rotateY(Math.PI); // bico aponta para -X: a 90° do rótulo, como no frasco real
+  const head = new THREE.Mesh(headGeo, blue);
+  head.name = 'pump-head-and-nozzle';
   root.add(head);
 
-  // The dark, recessed square is deliberately a real little tunnel rather than a decal.
-  const tunnel = new THREE.Mesh(new RoundedBoxGeometry(7.4, 7.4, 5.6, 4, 0.7), dark);
-  tunnel.position.set(0, 137, 27.4);
+  const tunnel = new THREE.Mesh(new RoundedBoxGeometry(5, 5, 6, 4, 0.7), dark);
+  tunnel.position.set(-25, 116.4, 0);
   tunnel.name = 'recessed-square-aperture';
   root.add(tunnel);
-  const apertureRim = new THREE.Mesh(new RoundedBoxGeometry(10.2, 10.2, 1.2, 4, 1.1), blueDark);
-  apertureRim.position.set(0, 137, 26.4);
+  const apertureRim = new THREE.Mesh(new RoundedBoxGeometry(0.8, 7.6, 8.4, 4, 1.1), blueDark);
+  apertureRim.position.set(-25.9, 116.4, 0);
   apertureRim.name = 'aperture-rim';
   root.add(apertureRim);
 
-  // A small inner back wall keeps the opening dark as the camera approaches it.
-  const apertureBack = new THREE.Mesh(new RoundedBoxGeometry(5.8, 5.8, 0.6, 3, 0.45), dark);
-  apertureBack.position.set(0, 137, 24.9);
-  root.add(apertureBack);
-
-  return { root, aperture: { x: 3.7, y: 3.7, z: 28.5, centerY: 137 } };
+  return { root, aperture: { x: 3, y: 2.6, z: 25.4, centerY: 107.5 } };
 }
 
 function loadLabel(url) {
@@ -149,14 +155,14 @@ export function createBottle({ container, onClip = () => {} }) {
 
   const state = { progress: 0, mouseX: 0, mouseY: 0, visible: true, disposed: false, frame: 0, lastRender: -1 };
   const startCamera = new THREE.Vector3(0, 40, 620);
-  const closeCamera = new THREE.Vector3(0, 137, 110);
-  const insideCamera = new THREE.Vector3(0, 137, 44);
+  const closeCamera = new THREE.Vector3(0, 116.4, 100);
+  const insideCamera = new THREE.Vector3(0, 116.4, 39);
   const lookStart = new THREE.Vector3(0, 40, 0);
-  const lookAperture = new THREE.Vector3(0, 137, 28);
+  const lookAperture = new THREE.Vector3(0, 116.4, 26);
   const projected = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
   const apertureCorners = [
-    new THREE.Vector3(-3.5, 133.5, 28.7), new THREE.Vector3(3.5, 133.5, 28.7),
-    new THREE.Vector3(3.5, 140.5, 28.7), new THREE.Vector3(-3.5, 140.5, 28.7),
+    new THREE.Vector3(-26.4, 113.8, -2.6), new THREE.Vector3(-26.4, 113.8, 2.6),
+    new THREE.Vector3(-26.4, 119, 2.6), new THREE.Vector3(-26.4, 119, -2.6),
   ];
   let lastSize = { width: 0, height: 0 };
 
@@ -174,6 +180,7 @@ export function createBottle({ container, onClip = () => {} }) {
 
   function updateCamera(p) {
     const portrait = camera.aspect < 1;
+    if (state.snapCam) { camera.position.set(0, 28, 660); camera.lookAt(0, 28, 0); return; }
     startCamera.set(0, portrait ? 10 : 40, portrait ? 1500 : 620);
     lookStart.set(0, portrait ? -95 : 40, 0);
     const approach = smoothstep((p - 0.1) / 0.5);
@@ -209,7 +216,7 @@ export function createBottle({ container, onClip = () => {} }) {
     const idle = reducedMotion ? 0 : Math.sin(performance.now() * 0.0014) * 0.7;
     bottle.root.rotation.set(
       THREE.MathUtils.degToRad(state.mouseY * 3 + idle * 0.35),
-      THREE.MathUtils.degToRad(-28 + 28 * smoothstep((p - 0.1) / 0.45) + state.mouseX * 3),
+      THREE.MathUtils.degToRad(state.snapRot != null ? state.snapRot : (-14 + 104 * smoothstep((p - 0.1) / 0.45) + state.mouseX * 3)),
       0,
     );
     bottle.root.position.y = p < 0.6 ? Math.sin(performance.now() * 0.0014) * 0.8 : 0;
@@ -253,8 +260,8 @@ export function createBottle({ container, onClip = () => {} }) {
     camera.updateProjectionMatrix();
     state.progress = 0;
     state.visible = true;
-    state.mouseX = (15 + Number(options.rotationY || 0)) / 3;
-    state.mouseY = Number(options.rotationX || 0) / 3;
+    state.snapRot = Number(options.rotationY || 0) - 6; state.snapCam = true;
+    state.mouseX = 0; state.mouseY = Number(options.rotationX || 0) / 3;
     render(true);
     if (options.top) {
       camera.position.set(0, 270, 5);
@@ -265,7 +272,7 @@ export function createBottle({ container, onClip = () => {} }) {
     state.progress = previous.progress;
     state.visible = previous.visible;
     state.mouseX = 0;
-    state.mouseY = 0;
+    state.mouseY = 0; state.snapRot = null; state.snapCam = false;
     camera.position.copy(oldCameraPosition);
     camera.quaternion.copy(oldCameraQuaternion);
     bottle.root.rotation.copy(oldBottleRotation);
