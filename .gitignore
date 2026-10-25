@@ -1,0 +1,8 @@
+skills-ref/
+*.codex.*
+codex-run.log
+BRIEF-CODEX-SITE.md
+DESIGN-SYSTEM.md
+LEIA-ME.md
+RESULTADO.md
+.DS_Store
