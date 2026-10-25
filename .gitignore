@@ -6,3 +6,12 @@ DESIGN-SYSTEM.md
 LEIA-ME.md
 RESULTADO.md
 .DS_Store
+ref-morpho/
+*.v2codex.*
+lab/
+BRIEF-*.md
+COPY-ALAN.md
+RESULTADO-C.md
+codex-*.log
+assets/img2/RESULTADO-B.md
+assets/3d/label-front.png
